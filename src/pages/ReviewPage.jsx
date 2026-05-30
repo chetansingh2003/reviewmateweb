@@ -70,33 +70,58 @@ export default function ReviewScreen() {
   // =====================================
   // AI REVIEW
   // =====================================
+
 async function generateAIReview(
   mood = "professional"
 ) {
+  try {
 
-  const response = await fetch(
-    "https://backk-production-ed86.up.railway.app/generate-review",
-    {
-      method: "POST",
-
-      headers: {
-        "Content-Type":
-            "application/json",
-      },
-
-      body: JSON.stringify({
-        mood,
-        rating,
-        category:
-          business?.category,
-      }),
+    if (!rating) {
+      alert("Please select rating first");
+      return;
     }
-  );
 
-  const data =
-      await response.json();
+    setLoading(true);
 
-  setText(data.review);
+    const response = await fetch(
+      "https://backk-production-ed86.up.railway.app/generate-review",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          mood,
+          rating,
+          category: business?.category || "Business",
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    console.log("AI Response:", data);
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Failed to generate review"
+      );
+    }
+
+    setText(data.review || "");
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "AI Review Error: " + error.message
+    );
+
+  } finally {
+
+    setLoading(false);
+  }
 }
   // =====================================
   // COPY REVIEW
@@ -299,49 +324,70 @@ async function generateAIReview(
               </button>
             ))}
           </div>
+          {
+  loading && (
+    <div className="mt-4 text-center">
+      <p className="text-white animate-pulse">
+        🤖 Generating SEO Review...
+      </p>
+    </div>
+  )
+}
+{
+  loading && (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+      <div className="bg-white rounded-3xl p-6 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+
+        <p className="mt-4 font-bold">
+          Generating AI Review...
+        </p>
+
+        <p className="text-gray-500 text-sm mt-2">
+          Please wait 2-5 seconds
+        </p>
+      </div>
+    </div>
+  )
+}
 
           {/* AI BUTTONS */}
 
           <div className="grid grid-cols-3 gap-3 mt-8">
 
-            <button
+          <button
+  disabled={loading}
+  onClick={() =>
+    generateAIReview("professional")
+  }
+  className="bg-[#005BEA] hover:bg-[#0048BA] text-white py-3 rounded-2xl font-bold"
+>
+  {
+    loading
+      ? "Generating..."
+      : "Professional"
+  }
+</button>
 
-              onClick={() =>
-                  generateAIReview(
-                      "professional"
-                  )
-              }
+           <button
+  disabled={loading}
+  onClick={() =>
+    generateAIReview("friendly")
+  }
+  className="bg-[#00A3FF] hover:bg-[#008AE0] text-white py-3 rounded-2xl font-bold"
+>
+  {loading ? "Generating..." : "Friendly"}
+</button>
 
-              className="bg-[#005BEA] hover:bg-[#0048BA] text-white py-3 rounded-2xl font-bold"
-            >
-              Professional
-            </button>
-
-            <button
-
-              onClick={() =>
-                  generateAIReview(
-                      "friendly"
-                  )
-              }
-
-              className="bg-[#00A3FF] hover:bg-[#008AE0] text-white py-3 rounded-2xl font-bold"
-            >
-              Friendly
-            </button>
-
-            <button
-
-              onClick={() =>
-                  generateAIReview(
-                      "emotional"
-                  )
-              }
-
-              className="bg-[#4F7CFF] hover:bg-[#3A63D8] text-white py-3 rounded-2xl font-bold"
-            >
-              Emotional
-            </button>
+           <button
+  disabled={loading}
+  onClick={() =>
+    generateAIReview("emotional")
+  }
+  className="bg-[#00A3FF] hover:bg-[#008AE0] text-white py-3 rounded-2xl font-bold"
+>
+  {loading ? "Generating..." : "Emotional"}
+</button>
           </div>
 
           {/* TEXTAREA */}

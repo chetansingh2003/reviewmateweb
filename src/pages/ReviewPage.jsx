@@ -70,49 +70,34 @@ export default function ReviewScreen() {
   // =====================================
   // AI REVIEW
   // =====================================
+async function generateAIReview(
+  mood = "professional"
+) {
 
-  function generateAIReview(
-      mood = "professional"
-  ) {
+  const response = await fetch(
+    "https://backk-production-ed86.up.railway.app/generate-review",
+    {
+      method: "POST",
 
-    const category =
-        business?.category || "";
+      headers: {
+        "Content-Type":
+            "application/json",
+      },
 
-    if (category === "restaurant") {
-
-      const reviews = {
-
-        professional:
-            "Amazing food quality and excellent customer service. The restaurant atmosphere was clean, cozy, and highly professional.",
-
-        friendly:
-            "Loved the food and staff behaviour. Definitely coming again with friends and family!",
-
-        emotional:
-            "One of the best restaurant experiences I’ve ever had. Everything felt perfect and memorable.",
-      };
-
-      setText(reviews[mood]);
+      body: JSON.stringify({
+        mood,
+        rating,
+        category:
+          business?.category,
+      }),
     }
+  );
 
-    else {
+  const data =
+      await response.json();
 
-      const reviews = {
-
-        professional:
-            "Excellent experience and professional service. Highly recommended!",
-
-        friendly:
-            "Amazing experience and very friendly staff!",
-
-        emotional:
-            "I genuinely loved the experience and felt valued as a customer.",
-      };
-
-      setText(reviews[mood]);
-    }
-  }
-
+  setText(data.review);
+}
   // =====================================
   // COPY REVIEW
   // =====================================

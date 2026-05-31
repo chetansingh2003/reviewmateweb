@@ -46,6 +46,9 @@ export default function ReviewScreen() {
 
 async function fetchBusiness() {
 
+
+  console.log("TOKEN:", token);
+  console.log("URL:", window.location.href);
   const { data: linkData, error: linkError } =
     await supabase
       .from("review_links")

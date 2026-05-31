@@ -13,8 +13,8 @@ export default function ReviewScreen() {
   const [searchParams] =
       useSearchParams();
 
-  const businessId =
-      searchParams.get("id");
+ const token =
+    searchParams.get("token");
 
   const [business, setBusiness] =
       useState(null);
@@ -44,28 +44,38 @@ export default function ReviewScreen() {
 
   }, []);
 
-  async function fetchBusiness() {
+async function fetchBusiness() {
 
-    const { data, error } =
-        await supabase
+  const { data: linkData, error: linkError } =
+    await supabase
+      .from("review_links")
+      .select("*")
+      .eq("token", token)
+      .single();
 
-            .from("business_profiles")
-
-            .select()
-
-            .eq("id", businessId)
-
-            .single();
-
-    if (error) {
-
-      console.log(error);
-
-      return;
-    }
-
-    setBusiness(data);
+  if (linkError || !linkData) {
+    alert("Invalid Review Link");
+    return;
   }
+  if (linkData.used) {
+  alert("Review Already Submitted");
+  return;
+}
+
+  const { data, error } =
+    await supabase
+      .from("business_profiles")
+      .select("*")
+      .eq("id", linkData.business_id)
+      .single();
+
+  if (error) {
+    console.log(error);
+    return;
+  }
+
+  setBusiness(data);
+}
 
   // =====================================
   // AI REVIEW
@@ -181,7 +191,7 @@ async function generateAIReview(
               .insert({
 
                 business_id:
-                businessId,
+business.id,
 
                 customer_name:
                 "Anonymous User",
@@ -192,6 +202,13 @@ async function generateAIReview(
                 rating:
                 rating,
               });
+
+              await supabase
+  .from("review_links")
+  .update({
+    used: true
+  })
+  .eq("token", token);
 
       if (error) {
 

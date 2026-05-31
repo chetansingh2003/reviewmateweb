@@ -83,7 +83,6 @@ async function fetchBusiness() {
   // =====================================
   // AI REVIEW
   // =====================================
-
 async function generateAIReview(
   mood = "professional"
 ) {
@@ -96,6 +95,8 @@ async function generateAIReview(
 
     setLoading(true);
 
+    console.log("Calling Backend...");
+
     const response = await fetch(
       "https://backk-production-ed86.up.railway.app/generate-review",
       {
@@ -106,29 +107,46 @@ async function generateAIReview(
         body: JSON.stringify({
           mood,
           rating,
-          category: business?.category || "Business",
+          category:
+            business?.category || "Business",
         }),
       }
     );
 
-    const data = await response.json();
+    console.log(
+      "Response Status:",
+      response.status
+    );
 
-    console.log("AI Response:", data);
+    const data =
+      await response.json();
+
+    console.log(
+      "AI Response:",
+      data
+    );
 
     if (!response.ok) {
       throw new Error(
-        data.error || "Failed to generate review"
+        data.error ||
+        "Failed to generate review"
       );
     }
 
-    setText(data.review || "");
+    setText(
+      data.review || ""
+    );
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "AI ERROR:",
+      error
+    );
 
     alert(
-      "AI Review Error: " + error.message
+      "AI Review Error: " +
+      error.message
     );
 
   } finally {
@@ -510,3 +528,4 @@ business.id,
     </div>
   );
 }
+

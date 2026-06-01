@@ -7,6 +7,8 @@ const supabase = createClient(
 
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3YWFsZHNucmpoZXhhaGFvcXpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMzIzNTksImV4cCI6MjA5NDYwODM1OX0.KdIyjjl3rfNFAuTLxlfhZDKwXvlDRPfAHYi1plSQ1Wk"
 );
+const API_URL =
+  "https://backk-production-ed86.up.railway.app";
 
 export default function ReviewScreen() {
 
@@ -43,6 +45,10 @@ export default function ReviewScreen() {
     fetchBusiness();
 
   }, []);
+  console.log(
+  "Status:",
+  response.status
+);
 
 async function fetchBusiness() {
 
@@ -97,21 +103,26 @@ async function generateAIReview(
 
     console.log("Calling Backend...");
 
-    const response = await fetch(
-      "https://backk-production-ed86.up.railway.app/generate-review",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          mood,
-          rating,
-          category:
-            business?.category || "Business",
-        }),
-      }
-    );
+    console.log(
+  "AI Response:",
+  data
+);
+
+const response = await fetch(
+  `${API_URL}/generate-review`,
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      mood,
+      rating,
+      category:
+        business?.category || "Business",
+    }),
+  }
+);
 
     console.log(
       "Response Status:",

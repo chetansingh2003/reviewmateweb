@@ -45,10 +45,8 @@ export default function ReviewScreen() {
     fetchBusiness();
 
   }, []);
-  console.log(
-  "Status:",
-  response.status
-);
+
+
 
 async function fetchBusiness() {
 
@@ -89,11 +87,12 @@ async function fetchBusiness() {
   // =====================================
   // AI REVIEW
   // =====================================
+
+
 async function generateAIReview(
   mood = "professional"
 ) {
   try {
-
     if (!rating) {
       alert("Please select rating first");
       return;
@@ -103,34 +102,28 @@ async function generateAIReview(
 
     console.log("Calling Backend...");
 
-    console.log(
-  "AI Response:",
-  data
-);
-
-const response = await fetch(
-  "https://backk-production-ed86.up.railway.app/generate-review",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      mood,
-      rating,
-      category:
-        business?.category || "Business",
-    }),
-  }
-);
+    const response = await fetch(
+      `${API_URL}/generate-review`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          mood,
+          rating,
+          category:
+            business?.category || "Business",
+        }),
+      }
+    );
 
     console.log(
       "Response Status:",
       response.status
     );
 
-    const data =
-      await response.json();
+    const data = await response.json();
 
     console.log(
       "AI Response:",
@@ -144,9 +137,7 @@ const response = await fetch(
       );
     }
 
-    setText(
-      data.review || ""
-    );
+    setText(data.review || "");
 
   } catch (error) {
 

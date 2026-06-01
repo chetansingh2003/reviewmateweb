@@ -109,7 +109,7 @@ async function generateAIReview(
 );
 
 const response = await fetch(
-  `${API_URL}/generate-review`,
+  "https://backk-production-ed86.up.railway.app/generate-review",
   {
     method: "POST",
     headers: {

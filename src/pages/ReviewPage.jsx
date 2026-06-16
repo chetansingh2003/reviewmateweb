@@ -389,9 +389,13 @@ business.id,
               <button
                 key={star}
 
-                onClick={() =>
-                    setRating(star)
-                }
+               onClick={() => {
+  setRating(star);
+
+  setTimeout(() => {
+    generateAIReview("professional");
+  }, 100);
+}}
 
                 className={`text-6xl transition-all duration-200 hover:scale-125 ${
                   rating >= star
@@ -433,7 +437,23 @@ business.id,
           {/* AI BUTTONS */}
 
      
-
+<div className="mt-6 flex justify-center">
+  <button
+    onClick={() => generateAIReview("professional")}
+    disabled={loading || !rating}
+    className="
+      bg-blue-600
+      text-white
+      px-6
+      py-3
+      rounded-xl
+      font-bold
+      disabled:opacity-50
+    "
+  >
+    Generate AI Review
+  </button>
+</div>
           {/* REVIEW SUGGESTIONS */}
 
 {suggestions.length > 0 && (

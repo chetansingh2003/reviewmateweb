@@ -432,16 +432,16 @@ business.id,
 
           {/* AI BUTTONS */}
 
-        <h3 className="text-gray-800 text-lg font-bold mb-4">
-Suggested Reviews
-</h3>
+     
 
           {/* REVIEW SUGGESTIONS */}
 
 {suggestions.length > 0 && (
   <div className="mt-8">
 
-    
+    <h3 className="text-gray-800 text-lg font-bold mb-4">
+      Suggested Reviews
+    </h3>
 
    <div className="flex gap-3 overflow-x-auto mt-8 pb-2">
   {suggestions.map((review, index) => (

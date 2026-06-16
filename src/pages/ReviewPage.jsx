@@ -44,6 +44,7 @@ export default function ReviewScreen() {
   useEffect(() => {
 
     fetchBusiness();
+    
 
   }, []);
 
@@ -149,17 +150,42 @@ setSuggestions([
   `Professional service with amazing customer support and quality work.`
 ]);
 
-  } catch (error) {
+  } 
+ catch (error) {
 
-    console.error(
-      "AI ERROR:",
-      error
-    );
+  console.log("OpenAI Failed");
 
-    alert(
-      "AI Review Error: " +
-      error.message
-    );
+  let fallbackReviews = [];
+
+  if (rating >= 5) {
+
+    fallbackReviews = [
+      "Really loved the experience, everything was perfect.",
+      "Excellent service and amazing staff.",
+      "Highly recommended. Will definitely come back."
+    ];
+
+  } else if (rating >= 4) {
+
+    fallbackReviews = [
+      "Good overall experience.",
+      "Satisfied with the service provided.",
+      "Friendly staff and nice environment."
+    ];
+
+  } else {
+
+    fallbackReviews = [
+      "The experience could be improved.",
+      "Some areas need attention and improvement.",
+      "Average experience overall."
+    ];
+
+  }
+
+  setSuggestions(fallbackReviews);
+  setText(fallbackReviews[0]);
+
 
   } finally {
 
@@ -167,68 +193,6 @@ setSuggestions([
   }
 }
 
-{/* REVIEW SUGGESTIONS */}
-
-{suggestions.length > 0 && (
-
-<div className="mt-8">
-
-<h3 className="text-white text-lg font-bold mb-4">
-Suggested Reviews
-</h3>
-
-<div className="space-y-4">
-
-{suggestions.map((review,index)=>(
-
-<div
-key={index}
-onClick={() => setText(review)}
-className="
-bg-white
-rounded-3xl
-p-5
-cursor-pointer
-shadow-lg
-hover:shadow-2xl
-transition-all
-duration-300
-border-2
-border-transparent
-hover:border-blue-500
-"
->
-
-<p className="text-gray-700 leading-7">
-{review}
-</p>
-
-<div className="mt-4 flex justify-end">
-
-<button
-className="
-bg-blue-600
-text-white
-px-4
-py-2
-rounded-xl
-font-semibold
-"
->
-Use Review
-</button>
-
-</div>
-
-</div>
-
-))}
-
-</div>
-
-</div>
-
-)}
   // =====================================
   // COPY REVIEW
   // =====================================
@@ -429,7 +393,7 @@ business.id,
                     setRating(star)
                 }
 
-                className={`text-5xl transition-all duration-200 hover:scale-125 ${
+                className={`text-6xl transition-all duration-200 hover:scale-125 ${
                   rating >= star
                       ? "text-yellow-400 scale-110"
                       : "text-blue-100"
@@ -468,91 +432,38 @@ business.id,
 
           {/* AI BUTTONS */}
 
-          <div className="grid grid-cols-3 gap-3 mt-8">
-
-          <button
-  disabled={loading}
-  onClick={() =>
-    generateAIReview("professional")
-  }
-  className="bg-[#005BEA] hover:bg-[#0048BA] text-white py-3 rounded-2xl font-bold"
->
-  {
-    loading
-      ? "Generating..."
-      : "Professional"
-  }
-</button>
-
-           <button
-  disabled={loading}
-  onClick={() =>
-    generateAIReview("friendly")
-  }
-  className="bg-[#00A3FF] hover:bg-[#008AE0] text-white py-3 rounded-2xl font-bold"
->
-  {loading ? "Generating..." : "Friendly"}
-</button>
-
-           <button
-  disabled={loading}
-  onClick={() =>
-    generateAIReview("emotional")
-  }
-  className="bg-[#00A3FF] hover:bg-[#008AE0] text-white py-3 rounded-2xl font-bold"
->
-  {loading ? "Generating..." : "Emotional"}
-</button>
-          </div>
+        <h3 className="text-gray-800 text-lg font-bold mb-4">
+Suggested Reviews
+</h3>
 
           {/* REVIEW SUGGESTIONS */}
 
 {suggestions.length > 0 && (
   <div className="mt-8">
 
-    <h3 className="text-gray-800 text-lg font-bold mb-4">
-      Suggested Reviews
-    </h3>
+    
 
-    <div className="space-y-4">
-
-      {suggestions.map((review, index) => (
-        <div
-          key={index}
-          onClick={() => setText(review)}
-          className="
-            bg-gray-50
-            rounded-3xl
-            p-5
-            cursor-pointer
-            shadow
-            border
-            hover:border-blue-500
-            transition
-          "
-        >
-          <p className="text-gray-700 leading-7">
-            {review}
-          </p>
-
-          <button
-            type="button"
-            className="
-              mt-4
-              bg-blue-600
-              text-white
-              px-4
-              py-2
-              rounded-xl
-              font-semibold
-            "
-          >
-            Use Review
-          </button>
-        </div>
-      ))}
-
+   <div className="flex gap-3 overflow-x-auto mt-8 pb-2">
+  {suggestions.map((review, index) => (
+    <div
+      key={index}
+      onClick={() => setText(review)}
+      className="
+        min-w-[260px]
+        bg-white
+        border
+        rounded-[24px]
+        p-5
+        cursor-pointer
+        shadow-sm
+      "
+    >
+      <p className="text-gray-800 text-lg leading-8">
+        {review}
+      </p>
     </div>
+  ))}
+</div>
 
   </div>
 )}
@@ -569,7 +480,7 @@ business.id,
                 )
             }
 
-            placeholder="Write your review..."
+            placeholder="Rate your experience to see suggestions..."
 
             className="
 w-full
@@ -659,9 +570,8 @@ resize-none
 
                   : isPositive
 
-                      ? "Copy & Open Google Review"
-
-                      : "Submit Private Feedback"
+                      ? "Ready to Review"
+                      : "Submit Review"
             }
 
           </button>

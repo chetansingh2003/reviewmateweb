@@ -27,6 +27,7 @@ export default function ReviewScreen() {
   const [text, setText] =
       useState("");
 
+  const [suggestions, setSuggestions] = useState([]);    
   const [loading, setLoading] =
       useState(false);
 
@@ -137,7 +138,16 @@ async function generateAIReview(
       );
     }
 
-    setText(data.review || "");
+    const aiReview = data.review || "";
+
+setText(aiReview);
+
+setSuggestions([
+  aiReview,
+  `Excellent service and friendly staff. Highly recommended to everyone.`,
+  `Great experience from start to finish. Will definitely visit again.`,
+  `Professional service with amazing customer support and quality work.`
+]);
 
   } catch (error) {
 
@@ -156,6 +166,69 @@ async function generateAIReview(
     setLoading(false);
   }
 }
+
+{/* REVIEW SUGGESTIONS */}
+
+{suggestions.length > 0 && (
+
+<div className="mt-8">
+
+<h3 className="text-white text-lg font-bold mb-4">
+Suggested Reviews
+</h3>
+
+<div className="space-y-4">
+
+{suggestions.map((review,index)=>(
+
+<div
+key={index}
+onClick={() => setText(review)}
+className="
+bg-white
+rounded-3xl
+p-5
+cursor-pointer
+shadow-lg
+hover:shadow-2xl
+transition-all
+duration-300
+border-2
+border-transparent
+hover:border-blue-500
+"
+>
+
+<p className="text-gray-700 leading-7">
+{review}
+</p>
+
+<div className="mt-4 flex justify-end">
+
+<button
+className="
+bg-blue-600
+text-white
+px-4
+py-2
+rounded-xl
+font-semibold
+"
+>
+Use Review
+</button>
+
+</div>
+
+</div>
+
+))}
+
+</div>
+
+</div>
+
+)}
   // =====================================
   // COPY REVIEW
   // =====================================
@@ -297,14 +370,16 @@ business.id,
   // =====================================
   // MAIN UI
   // =====================================
+  {/* REVIEW SUGGESTIONS */}
+
 
   return (
 
-    <div className="min-h-screen bg-gradient-to-br from-[#021B3A] via-[#003D9B] to-[#005BEA] pb-32">
+    <div className="min-h-screen bg-[#f5f7fb] pb-20">
 
       {/* HEADER */}
 
-      <div className="relative bg-gradient-to-r from-[#005BEA] via-[#003D9B] to-[#021B3A] text-white px-6 pt-14 pb-24 rounded-b-[50px]">
+      <div className="bg-white py-10 rounded-b-[40px] shadow-lg">
 
         <div className="flex flex-col items-center">
 
@@ -315,7 +390,7 @@ business.id,
             className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-white shadow-2xl object-cover"
           />
 
-          <h1 className="text-3xl md:text-4xl font-black mt-5 text-center">
+         <h1 className="text-3xl font-black mt-5 text-center text-gray-900">
 
             {business.business_name}
 
@@ -331,11 +406,11 @@ business.id,
 
       <div className="max-w-xl mx-auto px-5 -mt-14">
 
-        <div className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[35px] shadow-2xl p-6 sm:p-8">
+        <div className="bg-white rounded-[35px] shadow-2xl p-6 sm:p-8">
 
           {/* TITLE */}
 
-          <h2 className="text-2xl font-black text-white text-center">
+          <h2 className="text-2xl font-black text-gray-900 text-center">
 
             Rate Your Experience
 
@@ -367,7 +442,7 @@ business.id,
           {
   loading && (
     <div className="mt-4 text-center">
-      <p className="text-white animate-pulse">
+     <p className="text-blue-600 animate-pulse">
         🤖 Generating SEO Review...
       </p>
     </div>
@@ -430,6 +505,58 @@ business.id,
 </button>
           </div>
 
+          {/* REVIEW SUGGESTIONS */}
+
+{suggestions.length > 0 && (
+  <div className="mt-8">
+
+    <h3 className="text-gray-800 text-lg font-bold mb-4">
+      Suggested Reviews
+    </h3>
+
+    <div className="space-y-4">
+
+      {suggestions.map((review, index) => (
+        <div
+          key={index}
+          onClick={() => setText(review)}
+          className="
+            bg-gray-50
+            rounded-3xl
+            p-5
+            cursor-pointer
+            shadow
+            border
+            hover:border-blue-500
+            transition
+          "
+        >
+          <p className="text-gray-700 leading-7">
+            {review}
+          </p>
+
+          <button
+            type="button"
+            className="
+              mt-4
+              bg-blue-600
+              text-white
+              px-4
+              py-2
+              rounded-xl
+              font-semibold
+            "
+          >
+            Use Review
+          </button>
+        </div>
+      ))}
+
+    </div>
+
+  </div>
+)}
+
           {/* TEXTAREA */}
 
           <textarea
@@ -444,12 +571,25 @@ business.id,
 
             placeholder="Write your review..."
 
-            className="w-full h-44 border border-white/10 bg-white/10 text-white placeholder:text-blue-100 rounded-3xl p-5 mt-8 outline-none focus:border-blue-400 resize-none text-lg"
+            className="
+w-full
+h-44
+bg-white
+text-gray-800
+rounded-3xl
+p-5
+mt-6
+outline-none
+border-2
+border-gray-200
+focus:border-blue-500
+resize-none
+"
           />
 
           {/* CHARACTER */}
 
-          <div className="flex justify-between mt-3 text-sm text-blue-100">
+          <div className="flex justify-between mt-3 text-sm text-gray-500">
 
             <span>
               AI-powered smart review

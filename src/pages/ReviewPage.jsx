@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { useSearchParams } from "react-router-dom";
+import { getRandomStaticReviews } from "./reviews";
 
 const supabase = createClient(
   "https://pwaaldsnrjhexahaoqzs.supabase.co",
@@ -141,50 +142,28 @@ async function generateAIReview(
 
     const aiReview = data.review || "";
 
-setText(aiReview);
+    setText(aiReview);
 
-setSuggestions([
-  aiReview,
-  `Excellent service and friendly staff. Highly recommended to everyone.`,
-  `Great experience from start to finish. Will definitely visit again.`,
-  `Professional service with amazing customer support and quality work.`
-]);
+    // AI succeeded — suggestions are just the AI review.
+    // Static reviews.js reviews are reserved for when AI fails.
+    setSuggestions([aiReview]);
 
   } 
  catch (error) {
 
   console.log("OpenAI Failed");
 
-  let fallbackReviews = [];
-
-  if (rating >= 5) {
-
-    fallbackReviews = [
-      "Really loved the experience, everything was perfect.",
-      "Excellent service and amazing staff.",
-      "Highly recommended. Will definitely come back."
-    ];
-
-  } else if (rating >= 4) {
-
-    fallbackReviews = [
-      "Good overall experience.",
-      "Satisfied with the service provided.",
-      "Friendly staff and nice environment."
-    ];
-
-  } else {
-
-    fallbackReviews = [
-      "The experience could be improved.",
-      "Some areas need attention and improvement.",
-      "Average experience overall."
-    ];
-
-  }
+  // AI failed — fall back entirely to the static reviews.js
+  // data for this rating, with the business name filled in so
+  // the suggestions read naturally and stay SEO-friendly.
+  const fallbackReviews = getRandomStaticReviews(
+    rating,
+    3,
+    business?.business_name
+  );
 
   setSuggestions(fallbackReviews);
-  setText(fallbackReviews[0]);
+  setText(fallbackReviews[0] || "");
 
 
   } finally {
@@ -600,4 +579,3 @@ resize-none
     </div>
   );
 }
-

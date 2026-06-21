@@ -84,7 +84,18 @@ async function fetchBusiness() {
     return;
   }
 
-  setBusiness(data);
+const { count } = await supabase
+  .from("reviews")
+  .select("*", {
+    count: "exact",
+    head: true,
+  })
+  .eq("business_id", linkData.business_id);
+
+setBusiness({
+  ...data,
+  total_reviews: count || 0,
+});
 }
 
   // =====================================
@@ -200,6 +211,15 @@ async function generateAIReview(
 
   async function handleSubmit() {
 
+    if (
+  business?.total_reviews >=
+  business?.review_limit
+) {
+  alert(
+    "Review limit reached. Please upgrade plan."
+  );
+  return;
+}
     if (!rating) {
 
       alert(
@@ -371,9 +391,14 @@ business.id,
                onClick={() => {
   setRating(star);
 
+ if (
+  business?.total_reviews <
+  business?.review_limit
+) {
   setTimeout(() => {
     generateAIReview("professional");
   }, 100);
+}
 }}
 
                 className={`text-6xl transition-all duration-200 hover:scale-125 ${
@@ -417,25 +442,29 @@ business.id,
 
      
 <div className="mt-6 flex justify-center">
+ {business?.total_reviews < business?.review_limit && (
   <button
     onClick={() => generateAIReview("professional")}
     disabled={loading || !rating}
-    className="
-      bg-blue-600
-      text-white
-      px-6
-      py-3
-      rounded-xl
-      font-bold
-      disabled:opacity-50
-    "
+    className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold"
   >
     Generate AI Review
   </button>
+)}
 </div>
+{business?.total_reviews >=
+ business?.review_limit && (
+  <div className="mt-6 text-center">
+    <p className="text-red-600 font-bold">
+      Review limit reached.
+      Please upgrade your plan.
+    </p>
+  </div>
+)}
           {/* REVIEW SUGGESTIONS */}
 
-{suggestions.length > 0 && (
+{business?.total_reviews < business?.review_limit &&
+ suggestions.length > 0 && (
   <div className="mt-8">
 
     <h3 className="text-gray-800 text-lg font-bold mb-4">
